@@ -1,6 +1,14 @@
 import telebot
 import time
 import os
+from flask import Flask
+
+# Ініціалізація Flask для порту
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running", 200
 
 BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0')
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)  # Вимкнути багатопотоковість
@@ -32,14 +40,24 @@ def send_clanwar_announcement(message):
     except Exception as e:
         print(f"Error in handler: {e}")
 
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
 if __name__ == '__main__':
     print("🟢 Starting bot...")
+    
+    # Запускаємо Flask у окремому потоці
+    import threading
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.daemon = True
+    flask_thread.start()
+    
+    # Основний цикл бота
     while True:
         try:
-            # Повне очищення попередніх з'єднань
             bot.delete_webhook()
             time.sleep(1)
-            bot.skip_pending = True  # Пропустити очікувальні повідомлення
+            bot.skip_pending = True
             print("🔄 Starting polling...")
             bot.polling(none_stop=True, interval=3, timeout=60)
         except Exception as e:
