@@ -27,4 +27,5 @@ def send_clanwar_announcement(message):
         bot.send_message(chat_id, ", ".join(chunk))
 
 print("Бот запущено. Очікую повідомлень...")
+bot.remove_webhook()  # Видалити вебхук, якщо він був
 bot.polling(none_stop=True)
