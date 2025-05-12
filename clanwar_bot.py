@@ -3,7 +3,7 @@ import time
 import os
 
 BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0')
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(BOT_TOKEN, threaded=False)  # Вимкнути багатопотоковість
 
 usernames = [
     "xxvorost", "Matvii9265", "fofmen", "ga_d_zi_la",
@@ -32,17 +32,17 @@ def send_clanwar_announcement(message):
     except Exception as e:
         print(f"Error in handler: {e}")
 
-def start_bot():
+if __name__ == '__main__':
     print("🟢 Starting bot...")
     while True:
         try:
-            bot.remove_webhook()
-            print("🔄 Webhook removed, starting polling...")
-            bot.polling(none_stop=True, interval=2, timeout=30)
+            # Повне очищення попередніх з'єднань
+            bot.delete_webhook()
+            time.sleep(1)
+            bot.skip_pending = True  # Пропустити очікувальні повідомлення
+            print("🔄 Starting polling...")
+            bot.polling(none_stop=True, interval=3, timeout=60)
         except Exception as e:
             print(f"🔴 Bot crashed: {e}")
-            print("🔄 Restarting in 10 seconds...")
-            time.sleep(10)
-
-if __name__ == '__main__':
-    start_bot()
+            print("🔄 Restarting in 15 seconds...")
+            time.sleep(15)
