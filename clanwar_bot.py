@@ -29,3 +29,9 @@ def send_clanwar_announcement(message):
 print("Бот запущено. Очікую повідомлень...")
 bot.remove_webhook()  # Видалити вебхук, якщо він був
 bot.polling(none_stop=True)
+
+try:
+    bot.polling(none_stop=True)
+except Exception as e:
+    print(f"Бот впав: {e}")
+    time.sleep(5)  # Затримка перед перезапуском
