@@ -1,7 +1,8 @@
 import telebot
-import time  # Додано для обробки помилок
+import time
+import os
 
-BOT_TOKEN = '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0'
+BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0')
 bot = telebot.TeleBot(BOT_TOKEN)
 
 usernames = [
@@ -26,22 +27,22 @@ def send_clanwar_announcement(message):
         
         for i in range(0, len(mentions), chunk_size):
             chunk = mentions[i:i + chunk_size]
-            try:
-                bot.send_message(chat_id, ", ".join(chunk))
-            except Exception as e:
-                print(f"Помилка при відправці частини згадок: {e}")
-                continue
-                
+            bot.send_message(chat_id, ", ".join(chunk), parse_mode=None)
+            
     except Exception as e:
-        print(f"Помилка в обробнику команди: {e}")
+        print(f"Error in handler: {e}")
 
-print("Бот запущено. Очікую повідомлень...")
+def start_bot():
+    print("🟢 Starting bot...")
+    while True:
+        try:
+            bot.remove_webhook()
+            print("🔄 Webhook removed, starting polling...")
+            bot.polling(none_stop=True, interval=2, timeout=30)
+        except Exception as e:
+            print(f"🔴 Bot crashed: {e}")
+            print("🔄 Restarting in 10 seconds...")
+            time.sleep(10)
 
-while True:
-    try:
-        bot.remove_webhook()  # Видалити вебхук перед polling
-        bot.polling(none_stop=True, interval=1)
-    except Exception as e:
-        print(f"Бот впав: {e}")
-        print("Спробую перезапустити через 5 секунд...")
-        time.sleep(5)
+if __name__ == '__main__':
+    start_bot()
