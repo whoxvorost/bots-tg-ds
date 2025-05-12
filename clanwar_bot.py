@@ -3,7 +3,6 @@ import time
 import os
 from flask import Flask
 
-# Ініціалізація Flask для порту
 app = Flask(__name__)
 
 @app.route('/')
@@ -11,7 +10,7 @@ def home():
     return "Bot is running", 200
 
 BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0')
-bot = telebot.TeleBot(BOT_TOKEN, threaded=False)  # Вимкнути багатопотоковість
+bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 
 usernames = [
     "xxvorost", "Matvii9265", "fofmen", "ga_d_zi_la",
@@ -46,21 +45,22 @@ def run_flask():
 if __name__ == '__main__':
     print("🟢 Starting bot...")
     
+    # Додаткове очищення перед запуском
+    bot.delete_webhook()
+    time.sleep(5)  # Збільшена затримка
+    
     # Запускаємо Flask у окремому потоці
     import threading
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.daemon = True
     flask_thread.start()
     
-    # Основний цикл бота
+    # Основний цикл бота з більшою затримкою
     while True:
         try:
-            bot.delete_webhook()
-            time.sleep(1)
-            bot.skip_pending = True
             print("🔄 Starting polling...")
-            bot.polling(none_stop=True, interval=3, timeout=60)
+            bot.polling(none_stop=True, interval=5, timeout=90)  # Збільшені таймаути
         except Exception as e:
             print(f"🔴 Bot crashed: {e}")
-            print("🔄 Restarting in 15 seconds...")
-            time.sleep(15)
+            print("🔄 Restarting in 30 seconds...")
+            time.sleep(30)  # Збільшена затримка перезапуску
