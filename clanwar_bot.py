@@ -13,7 +13,7 @@ def home():
     return "🤖 Bot is running!", 200
 
 # Token
-BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAEZHoqcxlQnSvTfCqrvq2LVOhRwXfB3OuY')
+BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGmnD3GMOWwOeqfLegQq-D4OVNKRt_ck-8')
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 
 # Запам'ятовуємо час старту для uptime
