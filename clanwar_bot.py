@@ -43,6 +43,12 @@ def send_clanwar_announcement(message):
 
     except Exception as e:
         print(f"❌ Error in /clanwar handler: {e}")
+        
+# Команда /ping — перевірка "живий/неживий"
+@bot.message_handler(commands=['ping'])
+def ping(message):
+    bot.reply_to(message, "✅ Я на зв'язку!")
+
 
 # Run Flask app
 def run_flask():
