@@ -3,6 +3,7 @@ import time
 import os
 from flask import Flask, request
 import threading
+import datetime  # Додано для нової команди /ping
 
 # Flask app for health checks
 app = Flask(__name__)
@@ -14,6 +15,9 @@ def home():
 # Token
 BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAEZHoqcxlQnSvTfCqrvq2LVOhRwXfB3OuY')
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
+
+# Запам'ятовуємо час старту для uptime
+start_time = datetime.datetime.now()
 
 # Usernames list
 usernames = [
@@ -43,12 +47,37 @@ def send_clanwar_announcement(message):
 
     except Exception as e:
         print(f"❌ Error in /clanwar handler: {e}")
-        
-# Команда /ping — перевірка "живий/неживий"
+
+# Команда /ping — перевірка "живий/неживий" з деталями
 @bot.message_handler(commands=['ping'])
 def ping(message):
-    bot.reply_to(message, "✅ Я на зв'язку!")
+    try:
+        start = datetime.datetime.now()
 
+        user = message.from_user
+        username = f"@{user.username}" if user.username else f"ID: {user.id}"
+
+        # Тимчасова відповідь
+        sent = bot.reply_to(message, "⏳ Перевіряю стан...")
+
+        end = datetime.datetime.now()
+        delay_ms = int((end - start).total_seconds() * 1000)
+
+        uptime = datetime.datetime.now() - start_time
+        uptime_str = str(uptime).split('.')[0]  # без мілісекунд
+
+        reply_text = (
+            "✅ Бот працює\n"
+            f"👤 Користувач: {username}\n"
+            f"🕒 Затримка: {delay_ms} мс\n"
+            f"⏱️ Uptime: {uptime_str}"
+        )
+
+        # Редагування повідомлення
+        bot.edit_message_text(reply_text, chat_id=sent.chat.id, message_id=sent.message_id)
+    except Exception as e:
+        print(f"❌ Error in /ping handler: {e}")
+        bot.reply_to(message, "⚠️ Сталася помилка при перевірці.")
 
 # Run Flask app
 def run_flask():
