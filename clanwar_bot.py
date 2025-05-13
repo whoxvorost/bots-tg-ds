@@ -9,7 +9,7 @@ app = Flask(__name__)
 def home():
     return "Bot is running", 200
 
-BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAGNyoBtTMmQIr7FgRfeC8iPTofv-36doh0')
+BOT_TOKEN = os.getenv('BOT_TOKEN', '7601073026:AAERO2E1xrQRsZ0OZlRKfocWEpnKyyvgew4')
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 
 usernames = [
